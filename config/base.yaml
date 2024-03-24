@@ -2,8 +2,8 @@ env:
   device: "cpu"
 
 data:
-  img_path: "/Users/german/code/austral/tesis-austral/image-preprocessing/data/"
-  annotations_path: "/Users/german/code/austral/tesis-austral/image-preprocessing/data/labels.csv"
+  img_path: "../data/processed_data/"
+  annotations_path: "../data/processed_data/labels.csv"
 
 model:
   input_size: [75, 75]
