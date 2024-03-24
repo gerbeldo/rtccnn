@@ -18,6 +18,8 @@ class CellDivisionDataset(Dataset):
         self.img_dir = img_dir
         self.transform = transform
         self.device = torch.device(device if device else "cpu")
+
+        # make binary labels, rtcc vs all the rest
         self.img_labels_bin = self.img_labels.iloc[:, 1].apply(lambda x: 1 if x in [3, 7, 8] else 0)
 
 
