@@ -1,4 +1,5 @@
 [core]
-    remote = gdrive
-['remote "gdrive"']
-    url = gdrive://1SGZ0VSar1eDefiwa1FSId0c_RsV6n3se
+    remote = origin
+['remote "origin"']
+    url = s3://dvc
+    endpointurl = https://dagshub.com/gerbeldo/rtccnn.s3
