@@ -1,0 +1,26 @@
+env:
+  device: "gpu"
+
+data:
+  img_path: "/content/gdrive/MyDrive/austral/tesis/data/processed_data"
+  annotations_path: "/content/gdrive/MyDrive/austral/tesis/data/processed_data/labels.csv"
+
+model:
+  input_size: [75, 75]
+  num_classes: 2
+
+train:
+  batch_size: 32
+  epochs: 5
+  learning_rate: 0.001
+  size: 0.8
+
+label_mapping:
+  1: budding
+  2: growing
+  3: rtcc
+  4: peanut
+  5: shmoo
+  6: multiple_shmoo
+  7: rtcc_from_growing
+  8: rtcc_from_peanut
