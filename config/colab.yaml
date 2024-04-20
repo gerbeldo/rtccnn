@@ -1,5 +1,5 @@
 env:
-  device: "gpu"
+  device: "cuda"
 
 data:
   img_path: "/content/gdrive/MyDrive/austral/tesis/data/processed_data"
