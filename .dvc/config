@@ -3,3 +3,6 @@
 ['remote "origin"']
     url = s3://dvc
     endpointurl = https://dagshub.com/gerbeldo/rtccnn.s3
+['remote "gdrive"']
+    url = gdrive://14QlxNb8h2RyHyFZKTEO9O9dN4IgtPsqI
+    gdrive_acknowledge_abuse = true

@@ -1,0 +1,8 @@
+{
+    "python.analysis.extraPaths": [
+        "./utils"
+    ],
+    "python.analysis.include": [
+        "./utils"
+    ]
+}
