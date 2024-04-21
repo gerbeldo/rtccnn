@@ -2,8 +2,8 @@ env:
   device: "cuda"
 
 data:
-  img_path: "/content/gdrive/MyDrive/austral/tesis/data/processed_data"
-  annotations_path: "/content/gdrive/MyDrive/austral/tesis/data/processed_data/labels.csv"
+  img_path: "./processed_data"
+  annotations_path: "./processed_data/labels.csv"
 
 model:
   input_size: [75, 75]
