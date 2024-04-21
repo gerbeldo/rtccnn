@@ -4,24 +4,21 @@ import tifffile as tif
 import pandas as pd
 from torch.utils.data import Dataset
 import numpy as np
-#from torchvision import transforms
+
+# from torchvision import transforms
 import matplotlib.pyplot as plt
+
 
 class CellDivisionDataset(Dataset):
     def __init__(self, annotations_file, img_dir, transform=None, device=None):
-        """
-        Args:
-            img_dir (string): Directory with all the images.
-            transform (callable, optional): Optional transform to be applied on a sample.
-        """
         self.img_labels = pd.read_csv(annotations_file, header=None)
         self.img_dir = img_dir
         self.transform = transform
-        self.device = torch.device(device if device else "cpu")
 
         # make binary labels, rtcc vs all the rest
-        self.img_labels_bin = self.img_labels.iloc[:, 1].apply(lambda x: 1 if x in [3, 7, 8] else 0)
-
+        self.img_labels_bin = self.img_labels.iloc[:, 1].apply(
+            lambda x: 1 if x in [3, 7, 8] else 0
+        )
 
     def __len__(self):
         return len(self.img_labels)
@@ -41,21 +38,22 @@ class CellDivisionDataset(Dataset):
 
         # If the image has a different dtype (e.g., uint16), you might want to convert it
         # For example, converting to float and scaling to [0, 1] if necessary
-        #image_stack_tensor = image_stack_tensor.float() / image_stack_tensor.max()
+        # image_stack_tensor = image_stack_tensor.float() / image_stack_tensor.max()
 
         image_stack = image_stack.astype(np.float32) / np.iinfo(image_stack.dtype).max
 
         # If the image is not already in a torch tensor, convert it
         # Assuming image_stack is a numpy array of shape [num_frames, H, W] for grayscale images
-        image_stack_tensor = torch.from_numpy(image_stack).to(self.device)
+        image_stack_tensor = torch.from_numpy(image_stack)
 
         # Trim the tensor to have a fixed depth of 20 if it has more
         if image_stack_tensor.shape[0] > 20:
             image_stack_tensor = image_stack_tensor[:20, :, :]
 
-
         # Add a channel dimension to the video tensor
-        image_stack_tensor = image_stack_tensor.unsqueeze(0)  # This adds the channel dimension at position 0
+        image_stack_tensor = image_stack_tensor.unsqueeze(
+            0
+        )  # This adds the channel dimension at position 0
 
         # Convert label to a tensor (if it's not already one)
         label = torch.tensor(label)
@@ -68,7 +66,6 @@ class CellDivisionDataset(Dataset):
             pass
 
         return image_stack_tensor, label
-
 
     def show_stack(self, idx):
         """
@@ -95,7 +92,7 @@ class CellDivisionDataset(Dataset):
             if i < len(img):
                 # reshape removing the channel dimension
                 img = img.reshape(20, 75, 75)
-                ax.imshow(img.cpu().numpy()[i], cmap="gray")  # Assuming img is a torch tensor
+                ax.imshow(img.numpy()[i], cmap="gray")  # Assuming img is a torch tensor
                 ax.set_title(f"Frame {i+1}")
                 ax.axis("off")
             else:
