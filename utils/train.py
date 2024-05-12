@@ -3,8 +3,7 @@ from torch.utils.data import random_split
 import torch
 import torch.optim as optim
 
-
-def train_model(config, dataset, model):
+def train_model(config, dataset, model, run, npt_logger):
     model = model.to(config["env"]["device"])
     print(f"Model loaded on {config['env']['device']}")
 
@@ -18,7 +17,7 @@ def train_model(config, dataset, model):
     val_size = len(dataset) - train_size
 
     # Create a generator on the required device
-    # if using cuda, generator must be on CPU
+    # if using cuda, generator must be on CPU, but on gpu if using mps
     if config["env"]["device"] == "mps":
         generator = torch.Generator(device=config["env"]["device"])
     else:
@@ -34,12 +33,12 @@ def train_model(config, dataset, model):
         train_loader = DataLoader(
             train_dataset, batch_size=32, shuffle=True, generator=generator
         )
+        val_loader = DataLoader(
+            val_dataset, batch_size=32, shuffle=False, generator=generator
+        )
     else:
         train_loader = DataLoader(train_dataset, batch_size=32, shuffle=True)
-
-    # val_loader = DataLoader(
-    #     val_dataset, batch_size=32, shuffle=False, generator=generator
-    # )
+        val_loader = DataLoader(val_dataset, batch_size=32, shuffle=False)
 
     # Initialize the model
     model = model.to(config["env"]["device"])
@@ -52,10 +51,10 @@ def train_model(config, dataset, model):
     optimizer = optim.Adam(model.parameters(), lr=0.001)
 
     num_epochs = config["train"]["epochs"]
-    model = train_loop(num_epochs, model, criterion, optimizer, train_loader, config)
+    model = train_loop(num_epochs, model, criterion, optimizer, train_loader, config, run, npt_logger)
 
 
-def train_loop(num_epochs, model, criterion, optimizer, train_loader, config):
+def train_loop(num_epochs, model, criterion, optimizer, train_loader, config, run,  npt_logger):
     for epoch in range(num_epochs):
         running_loss = 0.0
 
@@ -94,6 +93,10 @@ def train_loop(num_epochs, model, criterion, optimizer, train_loader, config):
             if i % 10 == 9:  # print every 10 mini-batches
                 print("[%d, %5d] loss: %.3f" % (epoch + 1, i + 1, running_loss / 10))
                 running_loss = 0.0
+                    # Log after every 10 steps
+                run[npt_logger.base_namespace]["batch/loss"].append(loss.item())
+
+        npt_logger.log_checkpoint()
 
     print("Finished Training")
     return model
